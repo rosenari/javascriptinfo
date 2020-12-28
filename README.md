@@ -13,49 +13,49 @@
 |  2-2  | 코드 구조                            |      | https://ko.javascript.info/ | 🏁        |
 |  2-3  | 엄격 모드                            |      | https://ko.javascript.info/ | 🏁        |
 |  2-4  | 변수와 상수                          |      | https://ko.javascript.info/ | 🏁        |
-|  2-5  | 자료형                               |      | https://ko.javascript.info/ |          |
-|  2-6  | alert,prompt,confirm                 |      | https://ko.javascript.info/ |          |
-|  2-7  | 형 변환                              |      | https://ko.javascript.info/ |          |
-|  2-8  | 기본 연산자와 수학                   |      | https://ko.javascript.info/ |          |
-|  2-9  | 비교 연산자                          |      | https://ko.javascript.info/ |          |
-| 2-10  | if와 '?'를 사용한 조건처리           |      | https://ko.javascript.info/ |          |
-| 2-11  | 논리 연산자                          |      | https://ko.javascript.info/ |          |
-| 2-12  | null 병합 연산자 '??'                |      | https://ko.javascript.info/ |          |
-| 2-13  | while과 for                          |      | https://ko.javascript.info/ |          |
-| 2-14  | switch                               |      | https://ko.javascript.info/ |          |
-| 2-15  | 함수                                 |      | https://ko.javascript.info/ |          |
-| 2-16  | 함수 표현식                          |      | https://ko.javascript.info/ |          |
-| 2-17  | 화살표 함수 기본                     |      | https://ko.javascript.info/ |          |
-| 2-18  | 기본 문법요약                        |      | https://ko.javascript.info/ |          |
-|  3-1  | Chrome으로 디버깅하기                |      | https://ko.javascript.info/ |          |
-|  3-2  | 코딩 스타일                          |      | https://ko.javascript.info/ |          |
-|  3-3  | 주석                                 |      | https://ko.javascript.info/ |          |
-|  3-4  | 닌자 코드                            |      | https://ko.javascript.info/ |          |
-|  3-5  | 테스트 자동화와 Mocha                |      | https://ko.javascript.info/ |          |
-|  3-6  | 폴리필                               |      | https://ko.javascript.info/ |          |
-|  4-1  | 객체                                 |      | https://ko.javascript.info/ |          |
-|  4-2  | 참조에 의한 객체복사                 |      | https://ko.javascript.info/ |          |
-|  4-3  | 가비지 컬렉션                        |      | https://ko.javascript.info/ |          |
-|  4-4  | 메서드와 'this'                      |      | https://ko.javascript.info/ |          |
-|  4-5  | 'new'연산자와 생성자 함수            |      | https://ko.javascript.info/ |          |
-|  4-6  | 옵셔널 체이닝 '?.'                   |      | https://ko.javascript.info/ |          |
-|  4-7  | 심볼형                               |      | https://ko.javascript.info/ |          |
-|  4-8  | 객체를 원시형으로 변환하기           |      | https://ko.javascript.info/ |          |
-|  5-1  | 원시값의 메서드                      |      | https://ko.javascript.info/ |          |
-|  5-2  | 숫자형                               |      | https://ko.javascript.info/ |          |
-|  5-3  | 문자열                               |      | https://ko.javascript.info/ |          |
-|  5-4  | 배열                                 |      | https://ko.javascript.info/ |          |
-|  5-5  | 배열과 메서드                        |      | https://ko.javascript.info/ |          |
-|  5-6  | iterable 객체                        |      | https://ko.javascript.info/ |          |
-|  5-7  | 맵과 셋                              |      | https://ko.javascript.info/ |          |
-|  5-8  | 위크맵과 위크셋                      |      | https://ko.javascript.info/ |          |
-|  5-9  | Object.keys,values,entries           |      | https://ko.javascript.info/ |          |
-| 5-10  | 구조 분해 할당                       |      | https://ko.javascript.info/ |          |
-| 5-11  | Date 객체와 날짜                     |      | https://ko.javascript.info/ |          |
-| 5-12  | JSON과 메서드                        |      | https://ko.javascript.info/ |          |
-|  6-1  | 재귀와 스택                          |      | https://ko.javascript.info/ |          |
-|  6-2  | 나머지 매개변수와 전개문법           |      | https://ko.javascript.info/ |          |
-|  6-3  | 변수의 유효범위와 클로저             |      | https://ko.javascript.info/ |          |
+|  2-5  | 자료형                               |      | https://ko.javascript.info/ | 🏁        |
+|  2-6  | alert,prompt,confirm                 |      | https://ko.javascript.info/ | 🏁        |
+|  2-7  | 형 변환                              |      | https://ko.javascript.info/ | 🏁        |
+|  2-8  | 기본 연산자와 수학                   |      | https://ko.javascript.info/ | 🏁        |
+|  2-9  | 비교 연산자                          |      | https://ko.javascript.info/ | 🏁        |
+| 2-10  | if와 '?'를 사용한 조건처리           |      | https://ko.javascript.info/ | 🏁        |
+| 2-11  | 논리 연산자                          |      | https://ko.javascript.info/ | 🏁        |
+| 2-12  | null 병합 연산자 '??'                |      | https://ko.javascript.info/ | 🏁        |
+| 2-13  | while과 for                          |      | https://ko.javascript.info/ | 🏁        |
+| 2-14  | switch                               |      | https://ko.javascript.info/ | 🏁        |
+| 2-15  | 함수                                 |      | https://ko.javascript.info/ | 🏁        |
+| 2-16  | 함수 표현식                          |      | https://ko.javascript.info/ | 🏁        |
+| 2-17  | 화살표 함수 기본                     |      | https://ko.javascript.info/ | 🏁        |
+| 2-18  | 기본 문법요약                        |      | https://ko.javascript.info/ | 🏁        |
+|  3-1  | Chrome으로 디버깅하기                |      | https://ko.javascript.info/ | 🏁        |
+|  3-2  | 코딩 스타일                          |      | https://ko.javascript.info/ | 🏁        |
+|  3-3  | 주석                                 |      | https://ko.javascript.info/ | 🏁        |
+|  3-4  | 닌자 코드                            |      | https://ko.javascript.info/ | 🏁        |
+|  3-5  | 테스트 자동화와 Mocha                |      | https://ko.javascript.info/ | 🏁        |
+|  3-6  | 폴리필                               |      | https://ko.javascript.info/ | 🏁        |
+|  4-1  | 객체                                 |      | https://ko.javascript.info/ | 🏁        |
+|  4-2  | 참조에 의한 객체복사                 |      | https://ko.javascript.info/ | 🏁        |
+|  4-3  | 가비지 컬렉션                        |      | https://ko.javascript.info/ | 🏁        |
+|  4-4  | 메서드와 'this'                      |      | https://ko.javascript.info/ | 🏁        |
+|  4-5  | 'new'연산자와 생성자 함수            |      | https://ko.javascript.info/ | 🏁        |
+|  4-6  | 옵셔널 체이닝 '?.'                   |      | https://ko.javascript.info/ | 🏁        |
+|  4-7  | 심볼형                               |      | https://ko.javascript.info/ | 🏁        |
+|  4-8  | 객체를 원시형으로 변환하기           |      | https://ko.javascript.info/ | 🏁        |
+|  5-1  | 원시값의 메서드                      |      | https://ko.javascript.info/ | 🏁        |
+|  5-2  | 숫자형                               |      | https://ko.javascript.info/ | 🏁        |
+|  5-3  | 문자열                               |      | https://ko.javascript.info/ | 🏁        |
+|  5-4  | 배열                                 |      | https://ko.javascript.info/ | 🏁        |
+|  5-5  | 배열과 메서드                        |      | https://ko.javascript.info/ | 🏁        |
+|  5-6  | iterable 객체                        |      | https://ko.javascript.info/ | 🏁        |
+|  5-7  | 맵과 셋                              |      | https://ko.javascript.info/ | 🏁        |
+|  5-8  | 위크맵과 위크셋                      |      | https://ko.javascript.info/ | 🏁        |
+|  5-9  | Object.keys,values,entries           |      | https://ko.javascript.info/ | 🏁        |
+| 5-10  | 구조 분해 할당                       |      | https://ko.javascript.info/ | 🏁        |
+| 5-11  | Date 객체와 날짜                     |      | https://ko.javascript.info/ | 🏁        |
+| 5-12  | JSON과 메서드                        |      | https://ko.javascript.info/ | 🏁        |
+|  6-1  | 재귀와 스택                          |      | https://ko.javascript.info/ | 🏁        |
+|  6-2  | 나머지 매개변수와 전개문법           |      | https://ko.javascript.info/ | 🏁        |
+|  6-3  | 변수의 유효범위와 클로저             |      | https://ko.javascript.info/ | 🏁        |
 |  6-4  | 오래된 'var'                         |      | https://ko.javascript.info/ |          |
 |  6-5  | 전역객체                             |      | https://ko.javascript.info/ |          |
 |  6-6  | 객체로서의 함수와 기명 함수 표현식   |      | https://ko.javascript.info/ |          |
