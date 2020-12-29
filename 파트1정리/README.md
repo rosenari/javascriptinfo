@@ -597,3 +597,213 @@ user.sayHi();//보라 (sayHi의 this == user)
 ```
 
 #### 4.5 'new' 연산자와 생성자 함수
+- 생성자함수와 일반함수의 기술적 차이는 없다.
+- 함수 이름의 첫글자는 대문자로 시작한다.
+- 반드시 "new"연ㅅ나자를 붙여 실행한다.
+```
+function User(name){
+    this.name = name;
+    this.isAdmin = true;
+}
+
+let user = new User("Jack");
+alert(user.name);//Jack
+alert(user.isAdmin);//true
+//new User(..) 실행시 다음과 같은 알고리즘이 동작한다.
+//1.빈 객체를 만들어 this에 할당
+//2.함수 본문을 실행. this에 새로운 프로퍼티를 추가해 this를 수정
+//3.this를 반환한다.
+/*
+function User(name){
+    //this = {};
+    //새로운 프로퍼티를 this에 추가한다.
+    this.name = name;
+    this.isAdmin = true;
+
+    //return this;(this가 암시적으로 반환됨)
+}
+*/
+```
+
+- new.target 프로퍼티는 new로 호출시 함수자체를 반환한다.
+```
+function User(){
+    alert(new.target);
+}
+
+User(); //undefined
+new User(); //function User{...}
+```
+
+- 명시적 리턴으로 this가 아닌 객체를 리턴해줄수도 있다.
+```
+function BigUser(){
+    this.name = "John";
+
+    return { name : "Godzilla" };
+}
+
+alert( new BigUser().name ); //Godzilla
+```
+
+- 생성자 내 this를 활용해 메서드 선언이 가능하다.
+```
+function User(name){
+    this.name = name;
+    
+    this.sayHi = function(){
+        alert("My name is : "+this.name);
+    }
+}
+
+let john = new User("John");
+
+john.sayHi(); //My name is : John
+```
+
+#### 4.6 옵셔널 체이닝
+- ?.는 ?. '앞'의 평가대상이 undefined나 null이면 평가를 멈추고 undefined를 반환
+- ?.는 왼쪽 평가대상에 값이 없으면 즉시 평가를 중단한다.
+```
+let user = {};
+alert(user?.address?.street); //undefined
+```
+
+```
+let user = null;
+let x = 0;
+user?.sayHi(x++); //아무일도 일어나지않음
+alert(x); //0
+```
+
+```
+let user = {
+    admin(){
+        alert("관리자 계정입니다.");
+    }
+}
+
+user.admin?.(); //관리자 계정입니다.
+```
+
+- ?.는 delete와 조합해 사용가능하다.
+```
+delete user?.name //user가 존재하면 user.name을 삭제한다.
+```
+
+#### 4.7 심볼형
+- 심볼(symbol)은 유일한 식별자를 만들고 싶을때 사용
+```
+let id1 = Symbol("id");
+let id2 = Symbol("id");
+
+console.log(id1 == id2); //false
+```
+
+- 심볼은 문자열로 자동형변환되지않음,또한 .description프로퍼티에 설명정보가 있다.
+```
+let id = Symbol("id");
+console.log(id.description); // id 
+```
+
+- 서트파티 코드에서 가져온 객체(읽기전용)에 프로퍼티 부여하여, 식별자 부여가 가능하다.
+```
+let id = Symbol("id");
+user[id] =  "id값"; //user는 서드파티코드에서 가져온 객체
+``` 
+
+- 객체 리터럴에서 프로퍼티 이름으로 심볼사용
+```
+let id = Symbol("id");
+let user = {
+    name: "John",
+    [id]:123 //"id": 123으로 하면 심볼id가 아닌 문자열 id의 키가된다.
+}
+```
+
+- 심볼은 for...in에서 배제됩니다.
+```
+let id = Symbol("id");
+let user = {
+    name : "John",
+    age : 30,
+    [id] : 123
+}
+
+for(let key in user) console.log(key); //name과 age만 출력됨
+
+console.log(user[id]); //직접접근은 가능
+```
+
+- Object.assign의 경우 같이 복사된다. 그러나 Object.keys(user)의 경우 키가 심볼인 경우 배제된다.
+
+- 전역 심볼은 전역심볼레지스트리에 생성되며, Symbol.for을 이용해 생성 및 가져오기가 가능
+- 전역 심볼의 경우 이름이 같은 심볼이 같은 개체를 가르키길 원할때 사용
+```
+let id = Symbol.for("id");//심볼이 존재하지 않으면,전역레지에 심볼생성
+
+let idAgain = Symbol.for("id"); //동일한 이름으로 심볼을 읽어옴
+
+console.log(id === idAgain) //true
+```
+
+- Symbol.keyFor는 Symbol.for과는 반대로 이름을 가져올때 사용(로컬심볼은 못가져옴)
+```
+let sym = Symbol.for("name");
+let sym2 = Symbol.for("id");
+
+console.log(Symbol.keyFor(sym)); //name
+console.log(Symbol.keyFor(sym2)); //id
+```
+- 시스템 심볼은 자바스크립트 내부에서 사용되는 심볼로 Symbol.*로 접근가능
+
+#### 4.8 객체를 원시형으로 변환하기
+- 함수, 연산자 사용시 hint라는 개념이 있다. hint는 목표로 하는 자료형을 뜻한다.
+- boolean hint는 없다.
+```
+alert(obj); //alert함수는 문자열을 기대하는 연산이다.(hint가 string)
+
+let diff = date1 - date2; //- 이항연산의 경우 숫자를 기대한다.(hint number)
+let n = +obj; //단항연산자도 숫자를 기대(hint number)
+
+//연산자가 기대하는 자료형이 확실하지 않을때 hint는 default이다.
+let total = obj1 + obj2;//이항 덧셈연산은 hint default
+```
+- Symbol.toPrimitive라는 시스템심볼을 사용하면 객체가 메서드가 목표로 하는 자료형(hint)에 따라 리턴값을 원하는대로 조절할 수 있다.
+
+```
+let user ={
+    name : "John",
+    money : 1000
+}
+
+user[Symbol.toPrimitive] = function(hint) {
+    //반드시 원시값을 반환해야 합니다.
+    //hint는 "string","number","default" 중 하나가 될 수 있습니다.
+    return hint == "string" ? `{name: "${this.name}"}` : this.money;
+}
+
+console.log(user); //{name: "John"}
+console.log(+user); //1000
+console.log(user + 500); // 1500 - 객체 + 숫자의 경우 hint가 default임
+```
+
+- toString(), valueOf()는 Symbol.toPrimitive메서드가 없을때 hint string이면 toString(), 그외는 valueOf()가 호출된다.(실무에서는 toString()만 사용하는 경우도 다반사)
+```
+let user = {
+    name : "John",
+    money : 1000,
+
+    toString(){
+        return `{name : "${this.name}"}`;
+    }
+
+    valueOf(){
+        return this.money;
+    }
+}
+
+console.log(user); //{name : "John"}
+console.log(+user); //1000
+console.log(user + 500); //1500
+```
