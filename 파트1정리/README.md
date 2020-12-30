@@ -807,3 +807,477 @@ console.log(user); //{name : "John"}
 console.log(+user); //1000
 console.log(user + 500); //1500
 ```
+
+#### 5.1 원시값의 메서드
+- 원시값은 원시값 그대로 단일 값 형태를 유지합니다.
+- 문자열,숫자,불린,심볼의 메서드와 프로퍼티에 접근할 수 있습니다.
+- 위를 가능하게 하기위해 특수한 객체 "원시 래퍼 객체"를 일시적으로 생성합니다.
+```
+let str = "Hello";
+console.log(str.toUpperCase()); //HELLO
+//문자열 str은 원시값입니다.
+//toUpperCase() 호출시점부터 래퍼객체가 생성됩니다. 해당 객체의 toUpperCase()를 호출하여 결과값을 리턴합니다.
+//래퍼 객체는 즉시 파괴되며 원시값 str은 그값을 유지합니다.
+
+let n = 1.23456;
+console.log(n.toFixed(2));//1.23
+//숫자형 역시도 래퍼객체를 통해 간접적으로 toFixed(n)메서드를 사용할 수 있습니다.
+```
+
+#### 5.2 숫자형
+- 0이 많이 붙은 숫자는 e를 사용해 표현합니다.
+```
+let n = 123e6; //123000000 - 0이 6개
+let n2 = 123e-6; //0.000123 - .이 앞으로6칸
+```
+- parseInt(str,base)를 사용하여 str(base진수)를 10진수로 바꿉니다.
+```
+console.log(parseInt("11",2)); //3
+```
+- num.toString(base)를 사용하여 num을 base진수로 변환가능합니다.
+```
+let n = 2;
+console.log(n.toString(2)); //'10'
+```
+- Math.floor 소수 첫째 자리에서 내림(버림) 3.1 -> 3,-1.1 -> -2
+- Math.ceil 소수 첫째 자리에서 올림 3.1 -> 4 , -1.1 -> -1
+- Math.round 소수 첫째 자리에서 반올림 3.1 -> 3, -1.1 -> -1
+- Math.trunc 소수부를 무시 3.1 -> 3 -1.1 -> -1
+
+#### 5.3 문자열
+- 자바스크립에서는 UTF-16을 사용해 문자열을 인코딩한다.
+- 문자열내에서 글자하나를 얻으려면 []를 사용해라.
+```
+let str = "HELLO";
+console.log(str[0]);//H
+```
+- 부분 문자열을 얻으려면 slice나 substring을 사용해라.
+```
+let str = "hello world";
+console.log(str.slice(0,5)); //hello
+
+console.log(str.substring(5,0)); //hello
+console.log(str.substring(0,5)); //hello
+```
+- substr은 시작위치부터 길이를 이용하여 문자열을 추출한다.
+```
+let str = "stringify";
+console.log(str.substr(2,4)); //ring
+```
+
+- 글자의 코드 알아내기 : codePointAt(pos)
+- 코드를 글자로 변환하기 : String.fromCodePoint(code)
+```
+console.log("Z".codePointAt(0)); //90
+console.log(String.fromCodePoint(90)); //Z
+```
+
+- 문자열 비교하기 localeCompare : 앞에가 뒤보다 작으면 음수,크면 양수,같으면 0반환
+```
+console.log("AAA".localeCompare("BBB")); //-1
+```
+
+- includes,startsWith,endsWith : 부분문자열 포함여부 확인
+```
+console.log("Width".includes("id")); //true
+console.log("hello".includes("a")); //false
+
+console.log("Width".startsWith("Wi"));//true
+console.log("END".endsWith("D")); //true
+```
+
+#### 5.4 배열
+- 배열 선언은 [] or new Array()를 사용한다.
+- length 프로퍼티는 배열의 길이를 나타냄,length값을 수동으로 줄이면 배열끝이 잘린다.
+```
+let arr = [ item1, item2... ];
+
+arr = new Array( item1, item2... );
+```
+- 배열을 덱처럼 사용할 수 있습니다.(push,pop,shift,unshift)
+```
+let arr = [];
+arr.push(1); //배열에 끝에 값을 추가
+arr.push(2); //
+arr.pop(); //2 : 배열 끝에서 값을 제거후 제거한 값을 반환
+arr.shift(); //1 : 배열에 처음에서 값을 제거후 제거한 값을 반환
+arr.unshift(1); //배열에 처음에 값을 더한다.
+```
+
+- 배열에서 for..in을 사용하지 않는다. for..of를 사용하자
+```
+let arr = [3,4,5,6,7];
+for (let item of arr){
+    console.log(item); //3,4,5,6,7
+}
+```
+
+#### 5.5 배열과 메서드
+- find메서드는 함수가 참을 반환하면 탐색은 중단되고, 해당요소가 반환된다.
+- 즉 find메서드는 단 하나의 요소를 찾는다.
+```
+let users = [
+    {id:1,name:"John"},
+    {id:2,name:"Pete"},
+    {id:3,name:"Mary"}
+];
+
+let user = users.find(item => item.id == 1);
+console.log(user.name); //John
+```
+- find와 달리 여러개의 요소를 찾고 싶다면 filter를 사용한다.
+```
+let users = [
+    {id:1,name:"John"},
+    {id:2,name:"Pete"},
+    {id:3,name:"Mary"}
+];
+
+let user = users.filter(item => item.id < 3 );
+console.log(user.length); //2
+```
+- map메서드는 기존 배열을 원하는 형태로 만들어 반환해 줄수 있습니다.
+let result = ["hello","js","word"].map(item => item.length);
+console.log(result); //5,2,4
+- sort메서드는 기존 배열 요소를 정렬해 줍니다.(기존배열변경)
+- sort()는 기본 사전정렬입니다.
+```
+let arr = [1,2,15];
+arr.sort();
+console.log(arr); //1,15,2
+```
+```
+let arr = [1,2,15];
+arr.sort((a,b) => a-b );
+console.log(arr); //1,2,15
+```
+- reverse메서드는 arr의 요소를 역순으로 정렬시켜줍니다.
+```
+let arr = [1,2,3,4,5];
+arr.reverse();
+console.log(arr);//5,4,3,2,1
+```
+- split메서드는 문자열을 특정구분자를 기준으로 쪼개 배열로 반환합니다.
+```
+let names = "ljs,rosenari,color0e";
+let arr = names.split(",");
+for(let item of arr){
+    console.log(item);//ljs,rosenari,color0e
+}
+```
+
+- join메서드는 배열을 특정구분자로 연결하여 문자열로 반환합니다.
+```
+let arr = ["hello","js","world"];
+let str = arr.join(";");
+console.log(str);//hello;js;world
+```
+
+- Array.isArray로 배열 여부 알아내기
+```
+console.log(Array.isArray({})); //false
+conosle.log(Array.isArray([])); //true
+```
+
+- 함수를 호출하는 메서드는 대부분 thisArgs를 지정할 수있습니다.(메서드내 this를 지정할수 있음)
+```
+let army = {
+    minAge : 18,
+    maxAge : 27,
+    canJoin(user){
+        return user.age >= this.minAge && user.age <= this.maxAge;
+    }
+}
+
+let users = [
+    {age:16},
+    {age:20},
+    {age:23},
+    {age:30}
+]
+
+//함수 결과가 참인 users요소들만 추출하여 배열 구성
+let soldiers = users.filter(army.canJoin,army);
+console.log(soldiers.length); //2
+```
+
+#### 5.6 iterable 객체
+- iterable은 배열을 일반화한 객체이다. iterable객체는 for..of문법을 적용할 수있다.
+- 배열이 아닌 객체를 시스템 심볼을 사용해 iterable객체로 만들 수있다.
+
+```
+let range = {
+    from: 1,
+    to: 5
+};
+
+//for.. of 최초 호출시 Symbol.iterator가 호출됩니다.
+range[Symbol.iterator] = function(){
+   
+   //이터레이터 객체를 반환해야한다.
+   return {
+       current: this.from,
+       last: this.to,
+
+       // for..of 반복문에 의해 반복마다 next() 호출된다.
+       next(){
+           if(this.current <= this.last){
+               return {done:false, value:this.current++};
+           }else{
+               return {done.true};
+           }
+       }
+   }; 
+};
+
+for(let num of range){
+    console.log(num); //1,2,3,4,5
+}
+```
+
+- range에 next()메서드를 선언하여 이터레이터 객체와 반복대상 객체를 합칠수 있다.
+```
+let range = {
+    from : 1,
+    to : 5,
+
+    [Symbol.iterator](){
+        this.current = this.from;
+        return this;
+    },
+
+    next(){
+        if(this.current <= this.to){
+            return { done: false, value: this.current++ };
+        }else{
+            return { done: true };
+        }
+    }
+}
+
+for (let num of range){
+    console.log(num); //1,2,3,4,5
+}
+```
+
+- 배열과 문자열은 iterable이다.
+```
+let (char of "test"){
+    console.log(char); //t,e,s,t
+}
+```
+
+- Array.from은 이터러블이나 유사배열을 받아 Array를 만들어준다.
+```
+let str = "hello";
+let arr = Array.from(str); //['h','e','l','l','o'];
+```
+
+- length가 있는 객체는 유사배열로 취급됩니다.(for..of 안먹힘)
+```
+let arrayLike = {
+    0:"Hello",
+    1:"World",
+    length: 2
+};
+
+let arr = Array.from(arrayLike);
+console.log(arr.pop()); //World
+```
+
+#### 5.7 맵과 셋
+- Map은 다양한 key value로 구성된 자료구조 
+```
+let map = new Map();//맵생성
+
+map.set('1','str1'); //문자형 키
+map.set(1,'num1'); //숫자형 키
+map.set(true,'bool1'); //불린형 키
+
+//객체는 키를 문자형으로 변환하지만 맵은 변환하지 않는다.
+console.log(map.get(1)); //num1
+console.log(map.get('1')); //str1
+
+console.log(map.size); //3
+//map.clear()는 모든 요소제거
+//map.delete(1);은 키가 1인 요소 제거
+//map.has(1); 키 1이 존재하면 true 아니면 false
+```
+- Map의 키로 객체를 사용할 수 있다.
+- Map은 생성시 초기화가 가능하다.
+- map.keys()는 각 요소의 키를 모은 이터러블객체 반환.
+- map.values()는 각 요소의 값을 모은 이터러블객체 반환.
+- map.entries()는 [키,값]을 쌍으로 하는 이터러블 객체반환,for..of의 기본 객체로 사용
+```
+let map = new Map([
+    ['cucumber',500],
+    ['tomatoes',350],
+    ['onion',50]
+]);
+
+//키를 대상으로 순회합니다.
+for(let key of map.keys()){
+    console.log(key); //cucumber,tomatoes,onions
+}
+
+//값을 대상으로 순회
+for(let value of map.values()){
+    console.log(value); //500,350,50
+}
+
+//[키,값]쌍을 대상으로 순회
+for(let entry of map){
+    console.log(entry); //cucumber,500 ...
+}
+```
+
+- Object.entries(obj)를 사용하여 객체를 맵으로 변환할 수 있다.
+```
+let obj = {
+    name: "John",
+    age: 30
+};
+
+let map = new Map(Object.entries(obj));
+console.log(map.get("name"));//John
+```
+
+- Object.fromEntries(obj)를 사용하여 맵을 객체로 변환할 수 있다.
+```
+let prices = Object.fromEntries([
+    ['banana',1],
+    ['orange',2],
+    ['meat',4]
+]);
+
+console.log(prices.orange);//2
+```
+
+- 셋(Set)은 중복을 허용하지 않는 값을 모아놓은 컬렉션입니다.
+```
+let set = new Set();
+
+let john = {name:'John'};
+let pete = {name:'Pete'};
+let mary = {name:'Mary'};
+
+set.add(john);
+set.add(pete);
+set.add(john);
+set.add(mary);
+set.add(pete);
+
+console.log(set.size); //3
+
+for(let user of set){
+    console.log(user.name);//John,Pete,Mary
+}
+
+set.forEach((v,va,set)=>{
+    console.log(v.name); //John,Pete,Mary
+});
+
+set.has({name:'John'}); // true - 셋내 값이 존재하면 true, 아니면 false
+```
+
+#### 5.8 위크맵과 위크셋
+- 위크맵은 맵과 달리 키가 반드시 객체여야한다.
+- 키로 사용된 객체가 도달하지 않는 상태가 되면, 메모리와 WeakMap에서 자동삭제된다.
+```
+let john = { name : 'John' };
+
+let weakMap = new WeakMap();
+weakMap.set(john,'...');
+
+let john = null;
+
+//john이 참조하는 객체는 이제 메모리에서 사라지면 weakMap에서도 사라짐
+```
+
+- 위크맵은 캐싱에 활용할 수 있다.
+```
+let cache = new WeakMap();
+
+function process(obj){
+    if(!cache.has(obj)){
+        let result = obj;
+        
+        cache.set(obj,result);
+    }
+
+    return cache.get(obj);
+}
+
+let res1 = process(obj); //연산동작
+let res2 = process(obj); //이미 연산했으므로 cache에서 result가져옴
+
+obj = null; //캐시에서 obj에 관련된 연산결과 사라짐,즉 다시 계산해야함
+```
+
+- 위크셋은 객체만 저장가능하며, 도달 가능한 객체일 경우에만 셋과 메모리에 유지된다.
+```
+let vset = new WeakSet();
+
+let john = { name : "John" };
+let pete = { name : "Pete" };
+let mary = { name : "Mary" };
+
+vset.add(john);
+vset.add(pete);
+vset.add(mary);
+
+console.log(vset.has(john));//true
+
+console.log(vset.has(mary));//false
+
+john = null;//vset에서 john이 참조하는 객체 사라짐
+```
+
+#### 5.9 Object.keys,values,entries
+
+- 일반객체는 Map,Set,Array와 달리 Object.keys(obj),values(obj),entries(obj)를 통해 진짜배열을 반환받을수 있다.
+```
+let user = {
+    name:"John",
+    age: 30
+};
+
+for(let value of Object.values(user)){
+    console.log(value);//John, 30
+}
+
+```
+- 일반객체에는 map,filter같은 배열 전용 메서드를 사용할 수없다.
+- 그래서 배열로 변환후 사용해야한다.
+```
+let prices = {
+    banana: 1,
+    orange: 2,
+    meat: 4,
+};
+
+let doublePrices = Object.fromEntries(//배열을 객체로 다시돌림
+    Object.entries(prices).map(([key,value])=>[key,value * 2]);
+);
+
+console.log(doublePrices.meat); //8
+```
+
+#### 5.10 구조 분해 할당
+
+- 배열은 []를 사용해 분해 할당이 가능합니다.
+```
+let [name1,name2,..rest] = ["user1","user2","user3","user4"];
+console.log(name1);//user1
+console.log(name2);//user2
+console.log(rest.size);//2
+
+let [name = "aa",surname = "bb"] = ["rosenari"];
+
+console.log(name);//rosenari
+console.log(surname);//b
+```
+
+- 객체는 {}를 사용해 불해 할당이 가능합니다.
+```
+```
