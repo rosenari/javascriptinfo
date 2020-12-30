@@ -1280,4 +1280,110 @@ console.log(surname);//b
 
 - 객체는 {}를 사용해 불해 할당이 가능합니다.
 ```
+let options = {
+    title : "Menu"
+};
+
+let {width: w=100 , height: h = 200 ,title} = options;
+
+console.log(w);//100
+console.log(h);//200
+console.log(title);//Menu
 ```
+
+- 중첩된 배열 또는 객체의 정보를 추출할 수 있다.
+```
+let options = {
+    size:{
+        width:100,
+        height:200
+    },
+    items:["cake","donut"],
+    extra:true
+};
+
+let {
+    size:{
+        width,
+        height
+    },
+    items:[item1,item2],
+    title = "Menu"
+} = options;
+console.log(title); //Menu
+console.log(item1); //cake
+console.log(width); //100
+```
+
+- 함수 매개변수로 구조분해를 할때는 반드시 인수가 전달된다고 가정하는 것인데, 인수가 전달되지 않는 경우를 빈객체 전체 기본값 설정을 통해 방지할 수 있다.
+```
+function showMenu({title = "Menu",width=100,height=200} = {}){
+    console.log(`${title} ${width} ${height}`);
+}
+
+showMenu();//Menu 100 200
+``` 
+
+#### 5.11 Date 객체와 날짜
+- new Date()를 호출하면 새로운 Date객체가 생성된다.
+```
+let now = new Date();
+console.log(now); //현재날짜 및 시간이 출력됨
+```
+- new Date(datestring) datestring(날짜문자열)을 인수로 Date객체 생성이가능하다.
+```
+let date = new Date("2020-10-14");//시간은 현재 실행한 시각에 따라 설정
+
+let date = new Date(2011,0,1,2,3,4,567);
+console.log(date); //2011년 "1"월 1일 02시 3분 04.567초
+```
+- getDay()는 요일을 반환해주는 메서드이다. 0~6(0은 일요일 6은 토요일)
+- 2일 뒤 날짜를 구하는 방법
+```
+let date = new Date(2016,1,28);//2016년 2월 28일
+date.setDate(date.getDate()+2); 
+console.log(date); //2016년 3월 1일
+```
+- 0이나 음수를 날짜 구성요소에 설정하는 것 역시 가능하다.
+```
+let date = new Date(2016,0,2);//2016년 1월 2일
+
+date.setDate(1); //1일로 변경
+
+date.setDate(0); //지난달 마지막날로 설정
+console.log(date); //2015년 12월 31일
+```
+- 시간측정방법
+```
+let start = new Date();
+
+for(let i = 0 ; i < 100000 ; i++ ){
+    let some = i * i * i;
+}
+
+let end = new Date();
+console.log(`걸린시간(밀리초) : ${end - start}`)
+```
+- Date.parse를 사용하면 문자열에서 날짜를 읽어올수 있습니다.
+```
+let ms = Date.parse("2012-01-26T13:51:50.417-07:00');
+
+console.log(ms); //타임스탬프가 반환됨
+```
+
+#### 5.12 JSON과 메서드
+
+- JSON.parse를 사용하면 JSON을 본래 값으로 역 직렬화할 수있다
+- JSON.stringify를 사용하면 원하는 값을 JSON으로 직렬화 할수 있다.
+- 객체에 toJSON()메서드가 있으면 JSON.stringify(obj)호출시 자동 호출됨
+```
+let str = '{"title":"Conference","date":"2017-11-30T12:00:00.000Z"}';
+let meetup = JSON.parse(str, function(k,v){
+    if(k=='date') return new Date(v);
+    return v;
+});
+console.log(meetup.date.getDate());//30
+
+console.log(JSON.stringify(meetup));//{"title":"Conference","date":"2017-11-30T12:00:00.000Z"}
+```
+
