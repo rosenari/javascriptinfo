@@ -1387,3 +1387,296 @@ console.log(meetup.date.getDate());//30
 console.log(JSON.stringify(meetup));//{"title":"Conference","date":"2017-11-30T12:00:00.000Z"}
 ```
 
+#### 6.2 나머지 매개변수와 전개 문법
+- ...이 함수 매개변수의 끝에 있으면 인수목록의 나머지를 배열로 모아줍니다.
+```
+function showName(firstName, lastName, ...titles){
+    console.log(firstName);//Julius
+    console.log(lastName);//Caesar
+    console.log(titles[0]);//Consul
+    console.log(titles[1]);//Imperator
+    console.log(titles.length);//2
+}
+
+showName("Julius","Caesar","Consul","Imperator");
+```
+- arguments변수를 사용하면 모든 인수에 접근 할 수 있습니다.
+```
+function showName(){
+    console.log(arguments.length);
+    console.log(arguments[0]);
+    console.log(arguments[1]);
+}
+
+showName("Julius","Caesar");//2,Julius,Caesar
+
+showName("Bora");//1,Bora,undefined;
+```
+
+- ...이 함수 호출시 사용되면 배열을 목록으로 확장해줍니다.
+```
+let arr1 = [1,-2,3,4];
+let arr2 = [8,3,-8,1];
+
+console.log(Math.max(...arr1,...arr2));//8
+```
+
+#### 6.3 변수의 유효범위와 클로저
+- let,const와 같은 변수는 블록안에서만 유효하다.
+```
+{
+let msg = "Hello";
+
+console.log(msg);//Hello
+}
+
+console.log(msg);//error : msg is not not defined
+```
+
+- 자바스크립트에서 함수,코드블록,스크립트 전체는 렉시컬 환경이라 불리는 내부 숨김연관 객체를 갖습니다.
+- 렉시컬 환경 객체는 환경레코드와 외부 렉시컬환경이라는 부분으로 구성됩니다.
+- 환경 레코드 : 모든 지역변수를 프로퍼티로 저장하는 객체.
+- 외부 렉시컬 환경 : 외부 코드와 연관
+```
+let phrase = "Hello";
+console.log(pharse);
+//다음 코드에는 렉시컬 환경이 하나만 존재한다.
+//스크립트 전체와 관련되 렉시컬 환경을 전역 렉시컬 환경이라한다.
+//외부 참조의 경우 null이다.
+//phrase는 렉시컬환경의 프로퍼티일 뿐이다.
+/*
+******Lexical Enviroment****
+*    phrase : "Hello"      * -> null
+****************************
+*/
+```
+- 함수선언문의 경우 변수(변수는 해당 줄에와야 초기화됨)와 달리 렉시컬 환경에 바로 초기화가 된다. 그렇게 때문에 함수선언문은 밑에 있어도 위 줄에서 쓸수 있는것이다.
+```
+let phrase = "Hello";
+function say(name){
+    console.log(`${phrase}, ${name}`);
+}
+say("John");//Hello, John
+/*
+함수가 호출되면 새로운 렉시컬 환경이 생성되며, 호출된 렉시컬 환경을 참조합니다.
+****Lexical Environment of the call****     ********Lexical Enviroment*******
+*             name : "John"           * ->  *  say:function ,phrase:"Hello" * -> null        
+***************************************     *********************************
+*/
+//코드에서 변수에 접근할때는 내부 렉시컬 환경을 검색범위로 잡고 없다면 참조하는
+//외부 렉시컬 환경으로 검색범위를 확장하여 탐색하며, 찾을때까지 전역 렉시컬 환경까지 확장하며 탐색을 반복합니다.
+```
+
+- 함수에서 함수를 반환하면 반환되는 함수는 자신을 리턴한 외부 함수를 참조하는 Environment프로퍼티를 갖습니다.
+```
+function makeCounter(){
+    let count = 0;
+    return function(){
+        return count++;
+    };
+}
+let counter = makeCounter();
+/*
+counter.[[Enviroment]] -> {count:0} -> makeCounter,counter -> null
+counter();로 호출될때마다 새로운 렉시컬환경이 생성되고 counter는 자신을 생성한 외부환경을
+참조합니다. 그곳에는 count변수가 존재하기에 접근이가능하고 변경시 외부 환경에서 수정됩니다.
+그러므로 counter()호출이 반복되면 값이 누적됩니다. 또한 counter변수를 통해
+외부 렉시컬 환경에 있는 count에 계속 도달가능하기에 count는 계속 살아있는 것입니다.
+*/
+``` 
+
+#### 6.4 오래된 var
+- var는 let,const와 달리 함수스코프(유효범위가 함수)다.
+```
+if(true){
+    var test = true;
+}
+console.log(test); //true - 변수가 유효함
+```
+```
+function sayHi(){
+    if(true){
+        var phrase = "hello";
+    }
+    console.log(phrase);
+}
+sayHi();
+console.log(phrase); //error - 유효하지않음
+```
+- var로 선언한 모든 변수는 함수의 최상위로 호이스팅(끌어올려진다)된다.
+```
+function sayHi(){
+    console.log(phrase); //undefined
+
+    var phrase = "hello"; 
+}
+sayHi();
+//선언은 끌어올려지지만 할당은 끌어올려지지않는다.
+```
+
+#### 6.5 전역객체
+- 브라우저 환경에선 전역객체를 window,Nodejs환경에서는 global이라고 부른다.
+```
+var gVar = 5;
+console.log(window.gVar); //5 - var로 선언한 변수는 전역객체 window의 프로퍼티가 된다.
+```
+- 모든 스크립트에서 현재 사용자에 접근할 수 있게 이를 전역객체에 추가 할 수 있다.
+```
+window.currentUser = {
+    name: "John"
+};
+
+console.log(currentUser.name);//John
+
+console.log(window.currentUser.name);//John
+```
+- 다음과 같은 방식으로 최신자바스크립트를 현재브라우저가 지원하는지 확인가능합니다.
+```
+if(!window.Promise){//구식에는 Promise기능이 없다.
+    console.log("구식 브라우저입니다.");
+    window.Promise = ... //모던 자바스크립트 기능을 직접구현할수 있다.(폴리필)
+}
+```
+
+#### 6.6 객체로서의 함수와 기명 함수표현식
+- 함수 객체엔 함수이름을 저장하는 name프로퍼티와 매개변수의 개수를 저장하는 length프로퍼티가 있습니다.
+```
+function sayHi(){
+    console.log("Hi");
+}
+console.log(sayHi.name);//sayHi
+function f2(a,b,...more){}
+console.log(f2.length); // 2
+```
+- 클로저를 사용하지 않고 프로퍼티를 활용할 수 있다.
+```
+function makeCounter(){
+    function counter(){
+        return counter.count++;
+    }
+    counter.count = 0;
+
+    return counter;
+}
+let counter = makeCounter();
+count.count = 10;
+console.log(counter()); //10
+```
+- 기명 함수 표현식을 사용하면 재귀함수를 함수표현식으로 선언시에 참조되는 변수를 교체할 수 있습니다.
+```
+let sayHi = function func(who){
+    if(who){
+        console.log(`${who}`);
+    }else{
+        func("Guest");
+    }
+}
+let welcome = sayHi;
+sayHi = null;
+welcome(); //Guest;
+```
+
+#### 6.7 new Function 문법
+- new Function으로 만든 함수내부에서는 전역렉시컬 환경으로만 접근이 가능합니다. 즉, 클로저 사용불가
+```
+let func = new Function('a,b','return a+b'); //다음과같이 함수생성이 가능합니다.
+console.log(func(1,2)); //3
+```
+
+#### 6.8 setTimeout과 setInterval을 이용한 호출 스케줄링
+- setTimeout(func,delay,arg1,arg2,...) : delay시간후 func을 호출함
+- setInterval(func,delay,arg1,arg2,...) : delay시간마다 func을 호출함
+- 중첩 setTimeout은 지연시간이 일정하지만 setInterval은 지연시간이 일정하지않음(setInterval 콜백함수내 작업 역시 delay에 포함되기때문)
+```
+let i = 1;
+setInterval(function(){
+    func(i++); //delay시간에 포함
+},100);
+```
+```
+let i = 1;
+setTimeout(function run(){
+    func(i++);
+    setTimeout(run,100);
+},100);//func실행이 완료된후 100초의 지연시간후 다음 setTimeout로직이 수행됨
+```
+- clearTimeout,clearInterval은 setTimeout,setInterval작업을 취소할수있음
+```
+let timeId = setTimeout(...,1000);
+clearTimeout(timeId); //타임아웃 작업 취소
+```
+
+#### 6.9 call/apply와 데코레이터, 포워딩
+- 인수로 받은 함수의 행동을 변경시켜주는 함수를 데코레이터(decorator)라고 부릅니다.
+- 데코레이터를 사용해 캐싱기능을 구현할 수 있습니다. 또한 함수코드와 캐싱코드를 분리할 수 있습니다.
+```
+function slow(x){
+    console.log(`slow(${x})를 호출하였습니다.`);
+    return x;
+}
+
+function cachingDecorator(func){
+    let cache = new Map();
+
+    return function(x){
+        if(cache.has(x)){
+            return cache.get(x);
+        }
+
+        let result = func(x);
+
+        cache.set(x,result);
+        return result;
+    }
+}
+
+slow = cachingDecorator(slow);
+console.log(slow(1)); //slow(1)이 호출되었습니다. \n 1
+console.log(slow(1)); //1
+//현재 cachingDecorator에서 반환한 함수는 wrapper로써 func(x)의 호출결과를 캐싱로직으로 감쌉니다.
+```
+- call은 this를 명시적으로 고정하여 함수를 호출할수 있게하는 내장 함수 메서드이다.
+- 객체 메서드(this를 참조하는 경우)에 데코레이터를 사용하기위해서는 wrapper에 call을 사용해야한다.
+```
+let worker = {
+    someMethod(){
+        return 1;
+    },
+    slow(x){
+        console.log(`slow(${x})를 호출하였습니다.`);
+        return x * this.someMethod();
+    }
+};
+
+function cachingDecorator(func){
+    let cache = new Map();
+
+    return function(x){
+        if(cache.has(x)){
+            return cache.get(x);
+        }
+
+        let result = func.call(this,x);//worker.slow()호출시 this는 worker이 된다.
+        cache.set(x,result);
+        return result;
+    };
+}
+
+worker.slow = cachingDecorator(worker.slow);
+console.log(worker.slow(2));//호출잘됨
+console.log(worker.slow(2));//호출잘됨 - 캐시된 값만 리턴
+```
+- call과 apply사용법은 인수전달하는 방법만 다르다. func.call(obj,arg1,arg2..) func.apply(obj,유사배열객체);
+- apply가 좀더 빠르다고 한다.
+
+- 유사배열이나 이터러블객체에는 join메서드(문자열로 합치기)가 없는데 이를 빌려사용할수 있다.
+```
+function hash(){
+    console.log([].join.call(arguments)); //1,2
+//join호출시 this를 arguments로 고정하면
+//내부적으로 리턴할 결과값에 this[0]를 붙이고 그다음 this[1]를 붙이는 식으로
+//반복합니다. length만큼 반복한뒤 결과를 반환합니다.
+}
+
+hash(1,2);
+```
