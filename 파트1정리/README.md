@@ -1680,3 +1680,22 @@ function hash(){
 
 hash(1,2);
 ```
+
+#### 6.11 화살표 함수 다시 살펴보기
+- 화살표 함수는 'this'가 없다. (this에 접근하면 외부에서 값을 가져옵니다.)
+```
+let gruop = {
+    title:"1모둠",
+    students:["보라","호진","지민"],
+    showList(){
+        this.students.forEach(
+            student => console.log(this.title+":"+student);//this.title은 showList()가 가르키는 대상과 같다.
+            //일반함수를 사용했다면 에러가 났을것이다.
+        );
+    }
+}
+
+group.showList();
+```
+- 화살표함수에는 arguments가 없다.
+- 화살표함수는 new와 함께 호출할 수 없다.
