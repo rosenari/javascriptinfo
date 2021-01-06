@@ -1855,3 +1855,120 @@ Object.isSealed(obj)
 Object.isFrozen(obj)
 //configurable: false && writable: false 이니 ?
 ```
+
+#### 7.2 프로퍼티 getter와 setter
+
+- 객체의 프로퍼티는 데이터 프로퍼티(지금까지 사용한 일반적인)와 접근자 프로퍼티가 있습니다. 접근자 프로퍼티는 getter와 setter메서드로 표현됩니다.
+```
+let obj = {
+    //getter
+    get propName(){
+        //obj.propName을 실행할때 실행되는 메서드
+    },
+    /setter
+    set propName(value){
+        //obj.propName = value를 실행할때 실행되는 코드
+    }
+}
+```
+- getter와 setter는 가상의 프로퍼티이다. 가상의 프로퍼티는 읽고쓸수는 있지만 실제로는 존재하지 않는다.
+```
+let user = {
+    name: "John",
+    surname: "Smith",
+
+    get fullName(){
+        return `${this.name} ${this.surname}`;
+    },
+
+    set fullName(value){
+        [this.name, this.surname] = value.split(" ");
+    }
+
+}
+
+user.fullName = "Alice Cooper";
+
+console.log(user.name); //Alice
+console.log(user.surname); //Cooper
+```
+
+- 접근자 프로퍼티 설명자는 데이터 프로퍼티 설명자와 달리 4개의 설명자를 갖습니다.
+- get(프로퍼티 읽을때 동작),set(프로퍼티 쓸때 동작),enumerable(반복가능여부),configurable(프로퍼티 삭제 및 플래그 변경여부)
+```
+let user = {
+    name: "John",
+    surname: "Smith"
+};
+
+Object.defineProperty(user, 'fullName', {
+    get(){
+        return `${this.name} ${this.surname}`;
+    },
+
+    set(value){
+        [this.name,this.surname] = value.split(" ");
+    }
+});
+
+let desc = Object.getOwnPropertyDescriptor(user, "fullName");
+
+console.log(JSON.stringify(desc,null,2));
+/*
+fullName은 출력 되지 않네요.
+{
+  "enumerable": false,
+  "configurable": false
+}
+*/
+
+console.log(user.fullName); //John Smith
+```
+- 프로퍼티는 데이터프로퍼티와 접근자 프로퍼티 중 한종류에만 속할 수 있습니다.
+```
+Object.defineProperty({},'prop',{
+    get(){
+        return 1
+    },
+
+    value:2
+});//Error
+```
+- getter와 setter를 활용해서 데이터 프로퍼티를 감싸 똑똑하게 사용할 수 있습니다.
+```
+let user = {
+    get name(){
+        return this._name;
+    }
+
+    set name(value){
+        if(value.length < 4){
+            console.log("이름이 너무 짧습니다.");
+            return ;
+        }
+        this._name = value;
+    }
+};
+
+user.name = "Pete";
+console.log(user.name); //Pete
+user.name = "";//이름이 너무 짧습니다. : 할당안됨
+```
+- get 접근자 프로퍼티를 활용하면 데이터 프로퍼티를 가공한 값을 리턴할 수 있습니다.
+```
+function User(name,birthday){
+    this.name = name;
+    this.birthday = birthday;
+
+    Object.defineProperty(this, "age", {
+        get(){
+            let todayYear = new Date().getFullYear;
+            return todayYear - this.birthday.getFullYear;
+        }
+    });
+}
+
+let john = new User("John",new Date(1992,6,1));
+console.log(john.birthday);
+console.log(john.age);
+```
