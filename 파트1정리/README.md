@@ -1699,3 +1699,159 @@ group.showList();
 ```
 - 화살표함수에는 arguments가 없다.
 - 화살표함수는 new와 함께 호출할 수 없다.
+
+#### 7.1 프로퍼티 플래그와 설명자
+
+- 프로퍼티는 값과 함께 플래그라고 불리는 특별한 속성(3가지)을 갖습니다.
+- 플래그 : writable(값 수정가능여부),enumerable(반복문 사용가능여부),configurable(프로퍼티삭제,플래그 수정 여부)
+```
+let user = {
+    name : "John"
+};
+
+let descriptor = Object.getOwnPropertyDescriptor(user,'name');
+//Object.getOwnPropertyDescriptor : 특정 프로퍼티에 대한 정보를 얻는 메서드입니다.
+
+console.log(JSON.stringify(descriptor,null,2));
+//JSON.stringify(객체,[추출할 프로퍼티],들여쓰기 공백숫자) 객체를 문자열로 반환
+/*
+결과는 다음과 같다.
+{
+    "value": "John",//값
+    "writable": true,//플래그
+    "enumerable": true,//플래그
+    "configurable": true//플래그
+}
+플래그설정을 따로 하지않으면 자동으로 전부 true가 된다.
+*/
+```
+
+- Object.defineProperty메서드는 객체의 특정 프로퍼티의 값과 플래그를 설정할수 있습니다.
+```
+let user = {};
+
+Object.defineProperty(user,"name",{
+    value: "John"
+});
+//값만 설정하였음.. 그러면 나머지 플래그들은 전부 false가 됨
+
+let desc = Object.getOwnPropertyDescriptor(user,'name');
+Object.defineProperty(user,"name",{ value: "js",writable: false });
+console.log( JSON.stringify(desc, null, 2 ) );
+/*
+{
+    "value": "Jogn",
+    "writable": false,
+    "enumerable": false,
+    "configurable": false
+}
+*/
+```
+
+- writable 플래그를 false로 설정하면 프로퍼티에 값을 쓰기 못한다.
+```
+let user = {
+    name: "John"
+};
+//여기서 name 프로퍼티의 플래그는 전부 true가 된다.
+
+Object.defineProperty(user,"name",{
+    writable: false
+});
+//플래그들중 writable만 false가 된다.
+
+user.name = "Pete"; //error
+```
+
+- enumerable 플래그 값을 false로 설정하면 프로퍼티는 for..in반복문에서 배제됩니다.
+```
+let user = {
+    name: "John",
+    toString(){
+        return this.name;
+    }
+};
+
+Object.defineProperty(user,"toString",{
+    enumerable: false
+});
+//toString 메서드를 열거를 불가능하게 한다.
+
+for(let key in user) console.log(key); //name만 출력된다.
+
+console.log(Object.keys(user)); //Object.keys에서도 배제된다.
+```
+- configurable 플래그는 프로퍼티 삭제가 안되고, 플래그 수정이 불가능하게합니다.(false를 설정하는 순간 불변 프로퍼티로 만들어버림: 다신변경불가)
+- 대표적으로 Math.PI 프로퍼티가 configurable 플래그가 false이다.
+```
+let desc = Object.getOwnPropertyDescriptor(Math, "PI");
+
+console.log(JSON.stringify(desc,null,2));
+/*
+{
+    "value": 3.141592653589793,
+    "writable": false,
+    "enumerable": false,
+    "configurable" false
+}
+*/
+
+let user = {};
+
+Object.defineProperty(user, "name", {
+  value: "John",
+  writable: false,
+  configurable: false
+});
+//configurable 플래그를 false로 선언하는 순간
+//이젠 defineProperty메서드로 플래그를 절대 수정할수 없고
+//프로퍼티 삭제도 불가능하다.
+
+Object.defineProperty(user, "name", {
+    writable:true 
+});//에러가 난다.(수정불가)
+```
+
+- Object.defineProperties(obj,descriptors) 메서드를 사용하면 프로퍼티 여러개를 한번에 정의할 수 있다.
+```
+Object.defineProperties(user,{
+    name: { value: "John", writable: false },
+    surname: { value: "Smith", writable: false },
+    //...
+});
+//한번에 여러개의 프로퍼티(이름,값과 플래그)를 정의할 수 있다.
+```
+- Object.getOwnPropertyDescriptors(obj) 메서드는 프로퍼티 설명자를 한꺼번에 가져올 수 있습니다.
+- Object.defineProperties와 Object.getOwnPropertyDescriptors를 함께 사용하면 객체 복사시 플래그값까지 전부 함께 복사할 수 있다.
+```
+let clone = Object.defineProperties({},Object.getOwnPropertyDescriptors(obj));
+//obj객체에 모든 프로퍼티를 플래그와 함께 빈 객체에 정의하면
+//clone 변수로 정의된 객체가 반환된다.
+
+for(let key in user){
+    clone[key] = user[key];
+}
+//이 방법은 플래그를 복사하진 않습니다.
+```
+
+- 객체 내 모든 프로퍼티를 대상으로 플래그 제약을 걸수도있습니다.
+```
+Object.preventExtensions(obj)
+//해당 객체에 새로운 프로퍼티를 추가할 수 없습니다.
+
+Object.seal(obj)
+//객체의 모든 프로퍼티에 configurable을 false로 하는 것과 동일
+
+Object.freeze(obj)
+//객체의 모든 프로퍼티에 configurable: false, writable: false로 하는 것과 동일
+
+Object.isExtensible(obj)
+//새로운 프로퍼티를 추가하는게 불가능한 경우 false, 그렇지 않은 경우 true를 반환
+//프로퍼티 추가가 가능하니 ?
+
+Object.isSealed(obj)
+//configurable이 false니 ? 
+
+Object.isFrozen(obj)
+//configurable: false && writable: false 이니 ?
+```
