@@ -1972,3 +1972,123 @@ let john = new User("John",new Date(1992,6,1));
 console.log(john.birthday);
 console.log(john.age);
 ```
+#### 8.1 프로토타입 상속
+- 자바스크립트는 `[[Prototype]]`이라는 숨김 프로퍼티를 갖습니다. 해당 숨김프로퍼티는 null이거나 다른객체가 참조되는데, 객체를 참조하는 경우 참조대상을 '프로토타입(prototype)'이라 부릅니다
+- 특정 객체에 프로퍼티가 없으면 자동으로 프로토타입에서 프로퍼티를 찾습니다.
+```
+let animal = {
+    eats: true
+};
+let rabbit = {
+    jumps = true
+};
+rabbit.__proto__ = animal;
+//__proto__는 `[[Prototype]]`용 getter와 setter입니다.
+
+console.log(rabbit.eats); //true : rabbit객체에 프로퍼티가 없으니 프로토타입인 animal객체에서 eats프로퍼티를 찾습니다.
+console.log(rabbit.jumps); //true
+```
+```
+let animal = {
+    eats: true,
+    walk(){
+        console.log("동물이 걷습니다.");
+    }
+};
+
+let rabbit = {
+    jumps: true,
+    __proto__: animal
+};
+
+rabbit.walk(); //메서드 walk는 rabbit의 프로토타입인 animal에서 상속 받았습니다.
+```
+- 객체에 프로퍼티가 없는경우 프로토타입에서 찾는데 탐색은 체인형태로 해나간다(프로토타입의 프로토타입의... 끝날때까지).
+- 프로포타입은 순환 참조가 허용되지않는다.()
+```
+let animal = {
+    eats: true,
+    walk(){
+        console.log("동물이 걷습니다.");
+    }
+};
+
+let rabbit = {
+    jumps: true,
+    __proto__: animal
+};
+
+let longEar = {
+    earLength: 10,
+    __proto__: rabbit
+};
+
+longEar.walk(); //동물이 걷습니다.
+console.log(longEar.jumps); //true
+```
+
+- 메서드를 객체에서 호출했든 프로토타입에서 호출했든 상관없이 this는 언제나 .앞에 있는 객체가 됩니다.
+```
+//animal엔 다양한 메서드가 있습니다.
+let animal = {
+    walk(){
+        if(!this.isSleeping){
+            console.log(`동물이 걸어갑니다.`);
+        }
+    },
+    sleep(){
+        this.isSleeping = true;
+    }
+};
+
+let rabbit = {
+    name: "하얀 토끼",
+    __proto__: animal
+};
+
+rabbit.sleeping(); //rabbit객체에 isSleeping 프로퍼티를 true로 변경
+
+console.log(rabbit.isSleeping); //true
+console.log(animal.isSleeping); //undefined (프로토타입에서는 isSleeping이 없음)
+```
+
+- 프로토타입의 프로퍼티는 for..in 순회대상에 포함됩니다.
+```
+let animal = {
+    eats: true
+};
+
+let rabbit = {
+    jumps: true,
+    __proto__: animal
+};
+
+//Object.keys는 객체 자신의 키만 반환합니다.
+console.log(Object.keys(rabbit)); //jumps
+
+//for..in은 프로토타입의 프로퍼티 키까지 반환합니다.
+for(let key in rabbit){
+    console.log(key); //jumps,eats
+}
+```
+- obj.hasOwnProperty(prop) 메서드는 프로퍼티가 없거나,상속 프로퍼티인 경우 false를 반환합니다. 
+```
+let animal = {
+    eats: true
+};
+
+let rabbit = {
+    jumps: true,
+    __proto__: animal
+};
+
+for(let prop in rabbit){
+    let isOwn = rabbit.hasOwnProperty(prop);
+    
+    if(isOwn) {
+        console.log(`객체 자신의 프로퍼티: ${prop}`); //jumps
+    } else {
+        console.log(`상속 프로퍼티: ${prop}`); //eats
+    }
+}
+```
