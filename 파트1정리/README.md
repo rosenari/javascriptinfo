@@ -2092,3 +2092,15 @@ for(let prop in rabbit){
     }
 }
 ```
+
+#### 8.2 네이티브 프로토타입
+
+- Object 내장 객체 생성자 함수의 prototyep은 toString을 비롯한다양한 메서드가 구현되어있는 거대한 객체를 참조합니다.
+```
+let obj = {};
+
+console.log(obj.__proto__ === Object.prototype); //true
+console.log(obj.toString === obj.__proto__.toString); //true
+console.log(obj.toString === Object.prototype.toString); //true
+console.log(obj.prototype.__proto__); //null
+```
