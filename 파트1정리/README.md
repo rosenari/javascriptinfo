@@ -2104,3 +2104,52 @@ console.log(obj.toString === obj.__proto__.toString); //true
 console.log(obj.toString === Object.prototype.toString); //true
 console.log(obj.prototype.__proto__); //null
 ```
+- Array, Date, Function을 비롯한 내장 객체들 역시 프로토타입에 메서드를 저장해 놓습니다.
+```
+let arr = [1, 2, 3];
+console.log( arr.__proto__ === Array.prototype); //true
+console.log( arr.__proto__.__proto__ === Object.prototype ); //true
+console.log( arr.__proto__.__proto__.__proto__ ); //true
+
+console.log(arr); //1,2,3 Array.prototype.toString의 결과
+
+function f() {}
+
+console.log(f.__proto__ == Function.prototype); //true
+console.log(f.__proto__.__proto__ == Object.prototype); //true
+```
+
+- 네이티브 프로토타입을 수정할 수 있다. String.prototype에 메서드 하나 추가하면 모든 문자열에서 해당 메서드를 사용할 수 있다.
+- 그러나 네이티브 프로토타입을 수정하는 것은 권장되지 않는다.(충돌의 가능성이 있기때문)
+```
+String.prototype.show = function(){
+    console.log(this);
+};
+
+"BOOM!".show(); //BOOM!
+```
+- 폴리필(기능이 구현되지 않는경우 런타임에 기능을 만들어 주입)의 경우에는 네이티브 프로토타입 수정이 허용된다.
+```
+if(!String.prototype.repeat){
+    String.prototype.repeat = function(n){
+
+        return new Array(n+1).join(this);
+    };
+}
+
+console.log("La".repeat(3)); //LaLaLa
+```
+- 네이티브 프로토타입에 구현된 메서드를 빌려와서 사용할 수 있다.
+```
+let obj = {
+    0:"Hello",
+    1:"world!",
+    length:2,
+};
+
+obj.join = Array.prototype.join;
+
+console.log(obj.join(","));//Hello,world!
+//객체에 인덱스와 length가 존재하기때문에 join이 에러없이 동작가능하다.
+```
+
