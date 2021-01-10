@@ -2092,8 +2092,61 @@ for(let prop in rabbit){
     }
 }
 ```
+#### 8.2 함수의 prototype 프로퍼티
 
-#### 8.2 네이티브 프로토타입
+- new F() 생성자함수로 생성된 새로운 객체는 F.prototype 객체를 사용해 `[[Prototype]]`을 설정한다.
+- F.prototype은 new F가 호출될때만 사용됩니다.
+```
+let animal = {
+    eats: true
+};
+
+function Rabbit(name){
+    this.name = name;
+}
+
+Rabbit.prototype = animal; // new Rabbit을 호출해 만든 객체의 [[Prototype]]을 animal로 설정하라
+
+let rabbit = new Rabbit('white rabbit'); // rabbit.__proto__ = animal;
+console.log(rabbit.eats); //true
+```
+
+- 개발자가 특별히 할당하지 않아도 모든 함수는 "prototype" 프로퍼티를 갖는다.
+- 기본으로 설정되는 prototype은 constructor 프로퍼티 하나만 있는 객체를 가르키며, constructor는 함수 자신을 가르킨다.
+```
+function Rabbit() {}
+
+/* 기본 prototype
+Rabbit.prototype = { constructor: Rabbit };
+*/
+console.log(Rabbit.prototype.constructor == Rabbit); //true
+```
+- constructor 프로퍼티를 사용하면 기존 있던 객체의 constructor를 사용해 객체를 만들 수 있습니다.
+```
+function Rabbit(name){
+    this.name = name;
+    console.log(name);
+}
+let rabbit = new Rabbit("white rabbit");
+
+let rabbit2 = new rabbit.constructor("black rabbit");
+```
+- constructor를 유지하고 싶다면 prototype전체를 덮어쓰지 말고 기본 prototype에 원하는 프로퍼티를 추가/제거한다.
+```
+function Rabbit(){}
+
+Rabbit.prototype.jumps = true;
+// 이렇게하면 기본 Rabbit.prototype.constructor가 유지됩니다.
+```
+```
+Rabbit.prototype = {
+    jumps: true,
+    constructor: Rabbit
+};
+//수동으로 추가해 주었기 때문에 알맞는 constructor가 유지됩니다.
+```
+
+#### 8.3 네이티브 프로토타입
 
 - Object 내장 객체 생성자 함수의 prototyep은 toString을 비롯한다양한 메서드가 구현되어있는 거대한 객체를 참조합니다.
 ```
@@ -2153,3 +2206,148 @@ console.log(obj.join(","));//Hello,world!
 //객체에 인덱스와 length가 존재하기때문에 join이 에러없이 동작가능하다.
 ```
 
+#### 9.1 클래스와 기본 문법
+- 클래스를 사용하면 내부에서 정의한 메서드가 들어있는 객체를 생성할 수 있습니다.
+- 생성자 메서드 constructor()는 new에 의해 자동으로 호출되며, 객체를 초기화합니다.
+```
+class User{
+    constructor(name){
+        this.name = name;
+    }
+
+    sayHi(){
+        console.log(this.name);
+    }
+}
+
+let user = new User("John");
+user.sayHi();
+```
+
+- 클래스는 함수의 한 종류이며, constructor메서드는 함수의 본문입니다. 또한 클래스 내에 정의된 메서드는 클래스이름.prototype에 저장됩니다.
+```
+class User{
+    constructor(name) { this.name = name; }
+    sayHi() { console.log(this.name); }
+}
+
+console.log(typeof User); //function
+
+console.log(User == User.prototype.constructor);
+
+console.log(User.prototype.sayHi); //console.log(this.name);
+
+console.log(Object.getOwnPropertyNames(User.prototype)); //constructor,sayHi
+```
+- 클래스는 단순 편의문법이 아니다.
+- 함수와의 차이점 1 : class에는 내부프로퍼티인 `[[FunctionKind]]`: "classConstructor"가 이름표처럼 붙습니다. 해당 프로퍼티가 있다면 new와함께 호출하지 않으면 에러가 난다.
+- 함수와의 차이점 2 : 클래스 메서드는 열거할 수 없습니다. prototype에 추가된 프로퍼티들은 enumerable 플래그가 false입니다.(for..in 순회시 메서드는 제외됨)
+- 함수와의 차이점 3 : 클래스는 항상 엄격모드(use strict)로 실행됩니다.
+    - 그렇군요 .
+    - 아하
+```
+class User{
+    constructor(){ }
+}
+console.log(typeof User); //function
+console.log(User); //class User{ ... }
+User(); //Error
+```
+- 클래스도 다른 표현식 내부에서 정의,전달,반환,할당이 가능합니다. 이를 클래스 표현식이라 합니다.
+```
+let User = class {
+    sayHi(){
+        console.log("Hello");
+    }
+};
+```
+- 기명 함수표현식과 유사하게 클래스 표현식에도 이름을 붙여 클래스 내부에서 사용할 수 있습니다.
+```
+let User = class MyClass{
+    sayHi(){
+        console.log(Myclass); //MyClass라는 키워드는 클래스안에서만 사용가능
+    }
+}
+
+new User.sayHi();//MyClass의 정의를 보여줌
+
+console.log(Myclass); //ReferenceError
+```
+- 필요에 따라 클래스를 동적으로 생성하는 것도 가능합니다.
+```
+function makeClass(phrase){
+    //클래스를 선언하고 이를 반환함
+    return class {
+        sayHi(){
+            console.log(phrase);
+        };
+    };
+}
+let User = makeClass("Hello");
+
+new User().sayHi(); //Hello
+```
+- 클래스도 getter와 setter, 계산된 프로퍼티를 포함할 수 있습니다.
+```
+class User{
+    constructor(name){
+        this.name = name;//setter에 의해 this._name에 할당됨
+    }
+
+    get name(){
+        return this._name;
+    }
+
+    set name(value){
+        if(value.length < 4){
+            console.log("이름이 너무 짧습니다.");
+            return;
+        }
+        this._name = value;
+    }
+}
+
+let user = new User("John");
+console.log(user.name); //John
+
+user = new User(""); //이름이 너무 짧습니다.
+```
+- [...]를 이용하여 계산된 메서드이름을 만들 수 있습니다.
+```
+class User {
+    ['say'+'Hi'](){
+        console.log("Hello");
+    }
+}
+
+new User().sayHi(); //Hello
+```
+- 클래스 필드를 사용하면 어떤 종류의 프로퍼티도 클래스에 추가할 수 있다.
+- 클래스 필드의 경우 prototype이 아닌 개별 객체에만 설정된다.
+```
+class User {
+    name = "John";
+
+    sayHi(){
+        console.log(`Hello, ${this.name}!`);
+    }
+}
+
+let user = new User();
+console.log(user.name); //John
+console.log(User.prototype.name); //undefined
+```
+- arrow function을 사용하여 메서드를 선언하면 this는 생성된 객체를 참조한다.
+```
+class Button{
+    constructor(value){
+        this.value = value;
+    }
+    click = () => {
+        console.log(this.value);//arrow function으로 선언시 this는 new 로 생성된 객체를 참조
+    }
+}
+
+let button = new Button("hello");
+setTimeout(button.click, 1000); //hello
+```
