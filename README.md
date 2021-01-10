@@ -64,14 +64,14 @@
 |  6-9  | call/apply와 데코레이터,포워딩       |      | https://ko.javascript.info/ | 🏁        |
 | 6-10  | 함수 바인딩                          |      | https://ko.javascript.info/ | 🏁        |
 | 6-11  | 화살표 함수 다시 살펴보기            |      | https://ko.javascript.info/ | 🏁        |
-|  7-1  | 프로퍼티 플래그와 설명자             |      | https://ko.javascript.info/ |          |
-|  7-2  | 프로퍼티 getter와 setter             |      | https://ko.javascript.info/ |          |
-|  8-1  | 프로토타입 상속                      |      | https://ko.javascript.info/ |          |
-|  8-2  | 네이티브 프로토타입                  |      | https://ko.javascript.info/ |          |
-|  8-3  | 프로토타입 메서드와 proto가없는 객체 |      | https://ko.javascript.info/ |          |
-|  8-4  | 함수의 prototype프로퍼티             |      | https://ko.javascript.info/ |          |
-|  9-1  | 클래스와 기본문법                    |      | https://ko.javascript.info/ |          |
-|  9-2  | 클래스 상속                          |      | https://ko.javascript.info/ |          |
+|  7-1  | 프로퍼티 플래그와 설명자             |      | https://ko.javascript.info/ | 🏁        |
+|  7-2  | 프로퍼티 getter와 setter             |      | https://ko.javascript.info/ | 🏁        |
+|  8-1  | 프로토타입 상속                      |      | https://ko.javascript.info/ | 🏁        |
+|  8-2  | 네이티브 프로토타입                  |      | https://ko.javascript.info/ | 🏁        |
+|  8-3  | 프로토타입 메서드와 proto가없는 객체 |      | https://ko.javascript.info/ | 🏁        |
+|  8-4  | 함수의 prototype프로퍼티             |      | https://ko.javascript.info/ | 🏁        |
+|  9-1  | 클래스와 기본문법                    |      | https://ko.javascript.info/ | 🏁        |
+|  9-2  | 클래스 상속                          |      | https://ko.javascript.info/ | 🏁        |
 |  9-3  | 정적메서드와 정적 프로퍼티           |      | https://ko.javascript.info/ |          |
 |  9-4  | private,protected                    |      | https://ko.javascript.info/ |          |
 |  9-5  | 내장 클래스 확장하기                 |      | https://ko.javascript.info/ |          |
