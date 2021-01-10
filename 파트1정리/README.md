@@ -2351,3 +2351,266 @@ class Button{
 let button = new Button("hello");
 setTimeout(button.click, 1000); //hello
 ```
+
+#### 9.2 클래스 상속
+
+- extends 키워드를 이용하면 클래스 확장이 가능합니다.
+```
+class Animal {
+    constructor(name){
+        this.speed = 0;
+        this.name = name;
+    }
+    run(speed){
+        this.speed = speed;
+        console.log(`${this.name} 은/는 속도 ${this.speed}로 달립니다.`);
+    }
+    stop(){
+        this.speed = 0;
+        console.log(`${this.name} 이/가 멈췄습니다.`);
+    }
+}
+
+let animal = new Animal("동물");
+
+class Rabbit extends Animal {
+    hide(){
+        console.log(`${this.name} 이/가 숨었습니다.`);
+    }
+}
+
+let rabbit = new Rabbit("흰 토끼");
+
+//rabbit.__proto__ == Rabbit.prototype
+//Rabbit.prototype.__proto__ == Animal.prototype
+//rabbit객체에 메서드가 없다면 Rabbit.prototype에서 메서드를 가져오고
+//Rabbit.prototype에 메서가 없다면 Animal.prototype에서 메서드를 가져온다.
+
+rabbit.run(5); //흰 토끼 은/는 속도 5로 달립니다.
+rabbit.hide(); //흰 토끼 이/가 숨었습니다.
+```
+- 메서드 오버라이딩 : 부모클래스 메서드를 자식클래스에서 재정의하는 것
+```
+class Rabbit extends Animal{
+    stop(){
+        //rabbit.stop()을 호출할떄
+        //Animal의 stop()이 아닌, 이 메서드가 사용됩니다.
+    }
+}
+```
+- super.method(...)는 부모 클래스에 정의된 메서드,method를 호출합니다.
+- super(..)는 부모 생성자를 호출하는데 자식생성자 내부에서만 사용가능합니다.
+```
+class Animal{
+    constrcutor(name){
+        this.speed = 0;
+        this.name = name;
+    }
+
+    run(speed){
+        this.speed = speed;
+        console.log(`${this.name}가 속도 ${this.speed}로 달립니다.`);
+    }
+
+    stop(){
+        this.speed = 0;
+        console.log(`${this.name}가 멈췄습니다.`);
+    }
+}
+
+class Rabbit extends Animal{
+    /*
+    constructor(...args){
+        super(...args);
+    }
+    */
+    hide() {
+        console.log(`${this.name}가 숨었습니다 !`);
+    }
+
+    stop(){
+        super.stop(); //부모 클래스의 stop을 호출해 멈추고,
+        this.hide(); //숨습니다.
+    }
+}
+
+let rabbit = new Rabbit("흰 토끼");
+
+rabbit.run(5); //흰 토끼가 속도 5로 달립니다.
+rabbit.stop(); //흰 토끼가 멈췄습니다. 흰 토끼가 숨었습니다 !
+```
+- 상속 클래스 에서 생성자를 오버라이딩 하는 경우에는 반드시 super(...)를 호출해야한다. 하지않으면 에러가난다.
+- 상속 클래스의 경우 내부 프로퍼티인 `[[ConstructorKind]]`에 "derived"라는 값이 붙습니다.
+- 일반 클래스는 new와 함께 실행되면 빈객체가 생성되고 this에 이 객체를 할당합니다.
+- 허나 상속 클래스는 아무런 일이 일어나지 않습니다.(부모클래스에 처리해주길 기대함)
+- 그렇기에 상속 클래스에서는 super를 호출해 부모생성자를 실행해야합니다.
+```
+class Animal{
+    constructor(name){
+        this.speed = 0;
+        this.name = name;
+    }
+
+    //...
+}
+
+class Rabbit extends Animal{
+    constructor(name, earLength){
+        super(name);
+        this.earLength = earLength;//super호출후에 this사용가능
+    }
+
+    //...
+}
+
+let rabbit = new Rabbit("흰 토끼",10);
+console.log(rabbit.name); //흰 토끼
+console.log(rabbit.earLength); //10
+```
+- 부모 생성자는 자식 클래스에서 오버라이딩한 클래스 필드 값이 아닌 부모클래스 안의 클래스 필드값을 사용합니다.
+- 그 이유는 자식 생성자에서 super(..)를 호출하기 이전에 자식 클래스 필드는 초기화 되지 않기에 super(..)안에서는 부모클래스 필드가 사용되는 것입니다.
+```
+class Animal{
+    name = 'animal';
+
+    constructor(){
+        console.log(this.name);//자식 클래스 필드가 존재하지 않으므로 animal을 사용
+    }
+}
+
+class Rabbit extends Animal{
+    /*
+    constructor(...args){
+        super(...args);
+    }
+    */
+    name = 'rabbit';//super가 호출되기이전에는 존재하지 않음
+}
+
+new Animal(); //animal
+new Rabbit(); //animal
+```
+- 메서드 오버라이딩의 경우 부모 생성자 자식 메서드가 적용된다.
+```
+class Animal{
+    showName(){
+        console.log('animal');
+    }
+
+    constructor(){
+        this.showName();//상속한 경우 자식 메서드 실행됨
+    }
+}
+
+class Rabbit extends Animal{
+    showName(){
+        console.log('rabbit');
+    }
+}
+
+new Animal(); //animal
+new Rabbit(); //rabbit
+```
+- __proto__체인에서 call을 사용해 컨텍스트를 옮겨가며 부모 메서드를 호출하는 경우 문제가 발생할 수 있습니다.
+```
+let animal = {
+    name : "동물",
+    eat() {
+        console.log(`${this.name} 이/가 먹이를 먹습니다.`);
+    }
+};
+
+let rabbit = {
+    __proto__ : animal,
+    eat() {
+        //call을 사용해 컨텍스트를 옮겨 부모메서드를 호출합니다.
+        this.__proto__.eat.call(this);
+        //this는 LongEar이기때문에 this.__proto__는 rabbit입니다.
+        //또한 this로 call을 하는데 이것 역시 LongEar입니다.
+        //rabbit.eat를 계속 호출하는 무한 루프에 빠지게됩니다.
+    }
+};
+
+let longEar = {
+    __proto__ : rabbit,
+    eat() {
+        this.__proto__.eat.call(this);//this는 longEar입니다.
+    }
+}
+
+longEar.eat();
+```
+- `[[HomeObject]]`라는 메서드에 할당된 특수 프로퍼티가 있습니다. 해당 프로퍼티는 메서드가 선언되어 있는 객체를 가르킵니다.
+- super는 `[[HomeObject]]`를 이용해 부모 프로토타입과 메서드를 찾습니다.
+```
+let animal = {
+    name : "동물",
+    eat(){ //animal.eat.[[HomeObject]] == animal
+        console.log(`${this.name} 이/가 먹이를 먹습니다.`);
+    }
+}
+
+let rabbit = {
+    __proto__: animal,
+    name: "토끼",
+    eat(){//rabbit.eat.[[HomeObject]] == rabbit
+        super.eat(); //super는 rabbit의 프로토타입에서 eat를 복사해 호출합니다.
+    }
+}
+
+let longEar = {
+    __proto__: rabbit,
+    name: "귀가 긴 토끼",
+    eat(){ //longEar.eat.[[HomeObject]] == rabbit
+        super.eat();//eat는 HomeObject를 가지고 있기때문에 this 없이도 부모 메서드를 가져와 사용할 수 있다. call(this)할 필요없음.
+    }
+}
+
+longEar.eat(); //귀가 긴 토끼 이/가 먹이를 먹습니다.
+```
+- 메서드를 복사하는 경우 `[[HomeObject]]` 프로퍼티도 같이 복사됩니다.
+```
+let animal = {
+    sayHi(){
+        console.log(`나는 동물입니다.`);
+    }
+};
+
+let rabbit = {
+    __proto__ : animal,
+    sayHi(){
+        super.sayHi();
+    }
+};
+
+let plant = {
+    sayHi(){
+        console.log("나는 식물입니다.");
+    }
+};
+
+let tree = {
+    __proto__:plant,
+    sayHi: rabbit.sayHi
+    //tree.sayHi의 `[[HomeObject]]`는 rabbit입니다. 고로 super는 animal을 가르킵니다.
+};
+
+tree.sayHi(); //나는 동물입니다.
+```
+- method:function()의 형태로 메서드를 정의하는 경우는 `[[HomeObject]]`가 설정되지 않습니다.
+```
+let animal = {
+    eat: function(){
+        //...
+    }
+}
+
+let rabbit = {
+    __proto__: animal,
+    eat: function(){//eat.[[HomeObject]]가 존재하지 않음
+        super.eat(); //고로 super는 참조할 객체가 없으므로 에러
+    }
+}
+
+rabbit.eat(); // SyntaxError : 'super'...
+```
