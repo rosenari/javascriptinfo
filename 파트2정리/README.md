@@ -211,3 +211,151 @@ console.log(document.body.previousSibling); //HTMLHeadElement
     td.style.backgroundColor = "red";
 </script>
 ```
+
+#### 1.4 getElement*, querySelector*로 요소 검색하기
+
+- 요소들이 가까이 붙어있지 않은 경우 웹페이지 내에서 원하는 요소노드를 접근하는 방법이 있다.
+- document.getElementById 혹스 id를 사용해 요소검색이 가능하다.
+
+```javascript
+<div id="elem">
+    <div id="elem-content">Element</div>
+</div>
+
+<script>
+    //요소 얻기
+    let elem = document.getElementById("elem");
+
+    //배경색 변경
+    elem.style.background = 'red';
+</script>
+```
+
+- id 속성값을 지정하면 전역변수로 등록되며 접근가능하다.
+
+```javascript
+<div id="elem">
+    <div id="elem-content">Element</div>
+</div>
+
+<script>
+    //elem은 id가 'elem'인 요소를 참조한다. elem이름으로 전역변수가 선언되면 무용지물
+    elem.style.background = 'red';
+
+    //elem-content는 하이픈때문에 밑과 같이 참조
+    window['elem-content'].style.background = 'blue';
+</script>
+```
+
+- elem.querySelectorAll(css) : elem의 자식요소중 주어진 css선택자에 대응하는 요소들 반환
+- elem.querySelector(css) : elem의 자식요소중 주어진 css선택자에 대응하는 첫번째 요소반환
+
+```javascript
+<ul>
+    <li>1-1</li>
+    <li>1-2</li>
+</ul>
+<ul>
+    <li>2-1</li>
+    <li>2-2</li>
+</ul>
+<script>
+    let elements = document.querySelectorAll('ul > li:last-child');
+    
+    for(let elem of elements){
+        console.log(elem.innerHTML); //"1-2","2-2"
+    }
+</script>
+```
+
+- elem.matches(css) : elem이 css선택자와 일치하는 여부를 반환(true,false)
+
+```javascript
+<a href="http://example.com/file.zip">...</a>
+<a href="http://ya.ru">...</a>
+
+<script>
+    for(let elem of document.body.children){
+        if(elem.matches('a[href$="zip"]')){
+            console.log("주어진 css 선택자와 일치하는 요소 : " + elem.href );
+        }
+    }
+</script>
+```
+
+- elem.closest(css) : elem 조상노드중 css선택자와 일치하는 요소를 참조(거슬러 올라가며 찾으면 검색 중단)
+
+```javascript
+<h1>목차</h1>
+
+<div class="contents">
+    <ul class="book">
+        <li class="chapter">1장</li>
+        <li class="chapter">2장</li>
+    </ul>
+</div>
+
+<script>
+    let chapter = document.querySelector(".chapter");
+
+    console.log(chapter.closest('.book')); //UL
+    console.log(chapter.closest('.content')); //DIV
+
+    console.log(chapter.closest('.h1')); //null
+</script>
+```
+
+- getElementsBy* 메서드는 querySelector가 더 편리해서 잘 사용하지는 않으나 적어보긴는 하겠음
+- elem.getElementsByTagName(tag) : 주어진 태그에 해당하는 요소 컬렉션반환(*가 들어가면 모든요소)
+- elem.getElementsByClassName(className) : class 속성값을 기준으로 요소 컬렉션 반환
+- document.getElementsByName(name) : name 속성값을 기준으로 요소 컬렉션 반환
+
+```javascript
+<form name="my-form">
+    <div class="article">글</div>
+    <div class="long article">내용이 긴 글</div>
+</form> 
+
+<script>
+    //name 속성을 이용해 검색
+    let form = document.getElementsByName('my-form')[0];
+
+    //form내에서 클래스 이름 사용해 검색
+    let articles = form.getElementsByClassName('article');
+    console.log(articles.length); //2
+</script>
+```
+
+- getElementsBy로 시작하는 모든 메서드는 살아있는 컬렉션을 반환(문서에 변경이 있을때마다 컬렉션 자동 갱신)
+
+```javascript
+<div>첫번째 div</div>
+
+<script>
+    let divs = documents.getElementsByTagName('div');
+    console.log(divs.length); // 1
+</script>
+
+<div>두번째 div</div>
+
+<script>
+    console.log(divs.length); // 2
+</script>
+```
+
+- querySelectorAll은 정적인 컬레션 반환(컬렉션이 한번 확정되면 더이상 늘어나지 않음)
+
+```javascript
+<div>첫번째 div</div>
+
+<script>
+    let divs = documents.querySelectorAll('div');
+    console.log(divs.length); // 1
+</script>
+
+<div>두번째 div</div>
+
+<script>
+    console.log(divs.length); // 1
+</script>
+```
